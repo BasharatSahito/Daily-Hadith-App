@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -66,7 +67,10 @@ class NotificationService {
   // }
 
   void scheduleNotifications(
-      String title, String body, DateTime scheduleDT) async {
+      String title, String body, TimeOfDay notificationTime) async {
+    final int hour = notificationTime.hour;
+    final int minute = notificationTime.minute;
+
     AndroidNotificationDetails androidNotificationDetails =
         const AndroidNotificationDetails(
       "channelId",
@@ -77,15 +81,26 @@ class NotificationService {
     NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
 
+    final DateTime now = DateTime.now();
+    final DateTime scheduledTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
     try {
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
+        1,
         title,
         body,
-        tz.TZDateTime.from(scheduleDT, tz.local),
+        tz.TZDateTime.from(scheduledTime, tz.local),
         notificationDetails,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents:
+            DateTimeComponents.time, // Set this to repeat daily
       );
       print('Notification scheduled successfully');
     } catch (e) {
@@ -95,5 +110,14 @@ class NotificationService {
 
   void stopNotification() async {
     flutterLocalNotificationsPlugin.cancel(10);
+  }
+
+  void pendingNotifications() async {
+    print("clicked");
+    final List<PendingNotificationRequest> pendingNotifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    for (var notification in pendingNotifications) {
+      print('Scheduled notification: ${notification.title} ');
+    }
   }
 }
