@@ -1,7 +1,9 @@
-import 'dart:async';
+import 'dart:convert';
 
+import 'package:daily_hadees_app/Models/hadithmodel.dart';
 import 'package:daily_hadees_app/services/notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,39 +19,44 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     notificationService.initializeNotifications();
+    getHadith();
+  }
+
+  List<HadithModel> hadithList = [];
+
+  Future<void> getHadith() async {
+    try {
+      String jsonString = await rootBundle.loadString("assets/hadiths.json");
+      List<dynamic> jsonResponse = jsonDecode(jsonString);
+      List<HadithModel> loadedHadith = jsonResponse
+          .map((dynamic data) => HadithModel.fromJson(data))
+          .toList();
+      setState(() {
+        hadithList = loadedHadith;
+      });
+    } catch (e) {
+      debugPrint("Error Loading Data ${e.toString()}");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notification Testing"),
+        title: const Text("Daily Hadees"),
+        centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  Timer.periodic(const Duration(seconds: 3), (timer) {
-                    notificationService.showNotifications("Test Notification",
-                        "This is a First Test Notitifcation");
-                  });
-                },
-                child: const Text("Show Notification")),
-            // ElevatedButton(
-            //     onPressed: () {
-            //       notificationService.scheduleNotifications(
-            //         "Test",
-            //         "This is a body Test Notitifcation",
-            //         DateTime.now().add(const Duration(seconds: 3)),
-            //       );
-            //     },
-            //     child: const Text("Schedule Notification")),
-          ],
-        ),
-      ),
+      body: hadithList.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: hadithList.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(hadithList[index].title ?? "No Title"),
+                  subtitle: Text(hadithList[index].content ?? "No Content"),
+                );
+              },
+            ),
     );
   }
 }
