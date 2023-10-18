@@ -2,16 +2,19 @@
     {
         "id": 1,
         "title": "Hadith 1",
-        "content": "This is the content of Hadith 1."
+        "content": "This is the content of Hadith 1.",
+        "date": "2023-10-19 00:29:00"
     },
     {
         "id": 2,
         "title": "Hadith 2",
-        "content": "This is the content of Hadith 2."
+        "content": "This is the content of Hadith 2.",
+        "date": "2023-10-20 00:29:00"
     },
     {
         "id": 3,
         "title": "Hadith 3",
-        "content": "This is the content of Hadith 3."
+        "content": "This is the content of Hadith 3.",
+        "date": "2023-10-21 00:29:00"
     }
 ]

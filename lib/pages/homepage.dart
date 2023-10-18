@@ -37,21 +37,29 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  TimeOfDay? testTime;
+  // void selectTime() async {
+  //   TimeOfDay? selectedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: TimeOfDay.now(),
+  //   );
+  //   if (selectedTime != null) {
+  //     // User has selected a time, schedule the notification.
+  //     for (int i = 0; i < hadithList.length; i++) {
+  //       int id = i; // You can use a unique ID for each notification
+  //       String title = hadithList[i].title.toString();
+  //       String body = hadithList[i].content.toString();
 
-  void selectTime() async {
-    TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
+  //       notificationService.scheduleNotifications(
+  //           id, title, body, selectedTime);
+  //     }
+  //   }
+  // }
 
-    if (selectedTime != null) {
-      // User has selected a time, schedule the notification.
+  void fetchNotifications() async {
+    for (var data in hadithList) {
+      final date = DateTime.parse(data.date.toString());
       notificationService.scheduleNotifications(
-          "Zoned Schedule", "This is a Zoned Schedule body", selectedTime);
-      setState(() {
-        testTime = selectedTime;
-      });
+          data.id!, data.title.toString(), data.content.toString(), date);
     }
   }
 
@@ -64,12 +72,12 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          Text(testTime.toString()),
           ElevatedButton(
             onPressed: () {
-              selectTime();
+              // selectTime();
+              fetchNotifications();
             },
-            child: const Text("Select Time"),
+            child: const Text("Schedule"),
           ),
           ElevatedButton(
             onPressed: () {
