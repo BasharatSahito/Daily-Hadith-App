@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   void scheduleNotifications() async {
     TimeOfDay? selectedTime =
-        const TimeOfDay(hour: 22, minute: 25); // Set your fixed time
+        const TimeOfDay(hour: 22, minute: 39); // Set your fixed time
     DateTime now = DateTime.now();
     DateTime scheduledDateTime = DateTime(
       now.year,
@@ -154,3 +154,33 @@ class _HomePageState extends State<HomePage> {
   //         data.id!, data.title.toString(), data.content.toString(), date);
   //   }
   // }
+
+// Function to schedule new notifications when the app opens
+// void selectTime() async {
+//     TimeOfDay? selectedTime =
+//         const TimeOfDay(hour: 19, minute: 43); // Set your fixed time
+//     DateTime now = DateTime.now();
+//     DateTime scheduledDateTime = DateTime(
+//       now.year,
+//       now.month,
+//       now.day,
+//       selectedTime.hour,
+//       selectedTime.minute,
+//     );
+//     // Get the current index from SharedPreferences
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     int currentIndex = prefs.getInt('currentIndex') ?? 0;
+
+//     // Schedule the notification for the current index
+//     notificationService.scheduleDailyNotifications(
+//       hadithList[currentIndex].title.toString(),
+//       hadithList[currentIndex].content.toString(),
+//       scheduledDateTime,
+//     );
+
+//     // Increment the index for the next day, or reset to 0 if it exceeds the list length
+//     currentIndex = (currentIndex + 1) % hadithList.length;
+
+//     // Store the updated index in SharedPreferences
+//     await prefs.setInt('currentIndex', currentIndex);
+//   }
