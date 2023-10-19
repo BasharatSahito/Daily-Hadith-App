@@ -2,19 +2,31 @@
     {
         "id": 1,
         "title": "Hadith 1",
-        "content": "This is the content of Hadith 1.",
-        "date": "2023-10-19 00:29:00"
+        "content": "This is the content of Hadith 1."
     },
     {
         "id": 2,
         "title": "Hadith 2",
-        "content": "This is the content of Hadith 2.",
-        "date": "2023-10-20 00:29:00"
+        "content": "This is the content of Hadith 2."
     },
     {
         "id": 3,
         "title": "Hadith 3",
-        "content": "This is the content of Hadith 3.",
-        "date": "2023-10-21 00:29:00"
+        "content": "This is the content of Hadith 3."
+    },
+    {
+        "id": 4,
+        "title": "Hadith 4",
+        "content": "This is the content of Hadith 4."
+    },
+    {
+        "id": 5,
+        "title": "Hadith 5",
+        "content": "This is the content of Hadith 5."
+    },
+    {
+        "id": 6,
+        "title": "Hadith 6",
+        "content": "This is the content of Hadith 6."
     }
 ]

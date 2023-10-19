@@ -3,6 +3,7 @@ import 'package:daily_hadees_app/Models/hadithmodel.dart';
 import 'package:daily_hadees_app/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,8 +20,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     notificationService.initializeNotifications();
     getHadith();
+    scheduleNotifications();
+    notificationService.pendingNotifications();
   }
 
+// Fetching the Hadith from Hadith.JSON into hadithList
   List<HadithModel> hadithList = [];
   Future<void> getHadith() async {
     try {
@@ -37,30 +41,42 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // void selectTime() async {
-  //   TimeOfDay? selectedTime = await showTimePicker(
-  //     context: context,
-  //     initialTime: TimeOfDay.now(),
-  //   );
-  //   if (selectedTime != null) {
-  //     // User has selected a time, schedule the notification.
-  //     for (int i = 0; i < hadithList.length; i++) {
-  //       int id = i; // You can use a unique ID for each notification
-  //       String title = hadithList[i].title.toString();
-  //       String body = hadithList[i].content.toString();
+  void scheduleNotifications() async {
+    TimeOfDay? selectedTime =
+        const TimeOfDay(hour: 22, minute: 25); // Set your fixed time
+    DateTime now = DateTime.now();
+    DateTime scheduledDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedTime.hour,
+      selectedTime.minute,
+    );
+    // Get the current index from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int currentIndex = prefs.getInt('currentIndex') ?? 0;
 
-  //       notificationService.scheduleNotifications(
-  //           id, title, body, selectedTime);
-  //     }
-  //   }
-  // }
+    // Get the last scheduled date from SharedPreferences
+    DateTime lastScheduledDate = DateTime.fromMillisecondsSinceEpoch(
+        prefs.getInt('lastScheduledDate') ?? 0);
 
-  void fetchNotifications() async {
-    for (var data in hadithList) {
-      final date = DateTime.parse(data.date.toString());
-      notificationService.scheduleNotifications(
-          data.id!, data.title.toString(), data.content.toString(), date);
+    // Check if the date has changed
+    if (scheduledDateTime.difference(lastScheduledDate).inDays != 0) {
+      // The date has changed, so update the index
+      currentIndex = (currentIndex + 1) % hadithList.length;
+      // Store the updated index in SharedPreferences
+      await prefs.setInt('currentIndex', currentIndex);
     }
+
+    // Schedule the notification for the current index
+    notificationService.scheduleDailyNotifications(
+      hadithList[currentIndex].title.toString(),
+      hadithList[currentIndex].content.toString(),
+      scheduledDateTime,
+    );
+    // Store the current scheduled date in SharedPreferences
+    await prefs.setInt(
+        'lastScheduledDate', scheduledDateTime.millisecondsSinceEpoch);
   }
 
   @override
@@ -74,20 +90,43 @@ class _HomePageState extends State<HomePage> {
         children: [
           ElevatedButton(
             onPressed: () {
-              // selectTime();
-              fetchNotifications();
+              scheduleNotifications();
+              // fetchNotifications();
             },
             child: const Text("Schedule"),
           ),
           ElevatedButton(
             onPressed: () {
-              notificationService.pendingNotifications();
+              setState(() {
+                notificationService.pendingNotifications();
+              });
             },
             child: const Text("Show Pending Notifications"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              notificationService.stopNotification();
+            },
+            child: const Text("Stop All Notifications"),
+          ),
+          Expanded(
+            flex: 2,
+            child: ListView.builder(
+              itemCount: notificationService.pendingNotification.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Center(
+                    child: Text(
+                        "Pending Notification is ${notificationService.pendingNotification[index].title.toString()}"),
+                  ),
+                );
+              },
+            ),
           ),
           hadithList.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : Expanded(
+                  flex: 12,
                   child: ListView.builder(
                     itemCount: hadithList.length,
                     itemBuilder: (context, index) {
@@ -104,3 +143,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
+
+// Function to Show Notifications With Date & Time
+  // void fetchNotifications() async {
+  //   for (var data in hadithList) {
+  //     final date = DateTime.parse(data.date.toString());
+  //     notificationService.scheduleNotifications(
+  //         data.id!, data.title.toString(), data.content.toString(), date);
+  //   }
+  // }

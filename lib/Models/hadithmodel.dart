@@ -2,14 +2,18 @@ class HadithModel {
   int? id;
   String? title;
   String? content;
-  String? date;
-  HadithModel({this.id, this.title, this.content, this.date});
+  // String? date;
+  HadithModel({
+    this.id,
+    this.title,
+    this.content,
+  });
 
   HadithModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     content = json['content'];
-    date = json['date'];
+    // date = json['date'];
   }
 
   Map<String, dynamic> toJson() {
@@ -17,7 +21,7 @@ class HadithModel {
     data['id'] = id;
     data['title'] = title;
     data['content'] = content;
-    data['date'] = date;
+    // data['date'] = date;
     return data;
   }
 }
