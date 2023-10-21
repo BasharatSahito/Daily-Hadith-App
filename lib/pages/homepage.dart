@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   void scheduleNotifications() async {
     TimeOfDay? selectedTime =
-        const TimeOfDay(hour: 22, minute: 39); // Set your fixed time
+        const TimeOfDay(hour: 01, minute: 37); // Set your fixed time
     DateTime now = DateTime.now();
     DateTime scheduledDateTime = DateTime(
       now.year,
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
     // Schedule the notification for the current index
     notificationService.scheduleDailyNotifications(
       hadithList[currentIndex].title.toString(),
-      hadithList[currentIndex].content.toString(),
+      hadithList[currentIndex].urduHadith.toString(),
       scheduledDateTime,
     );
     // Store the current scheduled date in SharedPreferences
@@ -88,6 +88,13 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
+          // ElevatedButton(
+          //   onPressed: () {
+          //     // notificationService.showNotifications(
+          //     // "Title 1", "This is a Body");
+          //   },
+          //   child: const Text("Show Notification"),
+          // ),
           ElevatedButton(
             onPressed: () {
               scheduleNotifications();
@@ -110,7 +117,7 @@ class _HomePageState extends State<HomePage> {
             child: const Text("Stop All Notifications"),
           ),
           Expanded(
-            flex: 2,
+            flex: 1,
             child: ListView.builder(
               itemCount: notificationService.pendingNotification.length,
               itemBuilder: (context, index) {
@@ -130,10 +137,70 @@ class _HomePageState extends State<HomePage> {
                   child: ListView.builder(
                     itemCount: hadithList.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(hadithList[index].title ?? "No Title"),
-                        subtitle:
-                            Text(hadithList[index].content ?? "No Content"),
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Card(
+                            child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 15),
+                          child: Column(
+                            children: [
+                              hadithList[index].arabicHadith!.length > 100
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          hadithList[index]
+                                              .arabicHadith
+                                              .toString()
+                                              .substring(0, 200),
+                                          style: const TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextButton(
+                                            onPressed: () {},
+                                            child: Text("...More")),
+                                      ],
+                                    )
+                                  : Text(
+                                      hadithList[index].arabicHadith.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                              const SizedBox(height: 30),
+                              hadithList[index].urduHadith!.length > 100
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          hadithList[index]
+                                              .urduHadith
+                                              .toString()
+                                              .substring(0, 100),
+                                          style: const TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextButton(
+                                            onPressed: () {},
+                                            child: Text("...More")),
+                                      ],
+                                    )
+                                  : Text(
+                                      hadithList[index].urduHadith.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                              const SizedBox(height: 10),
+                              Text(hadithList[index].info.toString())
+                            ],
+                          ),
+                        )),
                       );
                     },
                   ),

@@ -1,4 +1,6 @@
 import 'package:daily_hadees_app/pages/homepage.dart';
+import 'package:daily_hadees_app/pages/splashscreen.dart';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,9 +12,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Daily Hadees',
-      home: HomePage(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: "/splashscreen",
+      routes: {
+        "/splashscreen": (context) => const SplashScreen(),
+        "/homepage": (context) => const HomePage(),
+      },
     );
   }
 }
