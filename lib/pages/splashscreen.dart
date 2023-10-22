@@ -24,9 +24,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: Text("Splash Screen"),
+        body: Center(
+            child: FractionallySizedBox(
+      widthFactor: 0.6, // Adjust the width factor as needed
+      child: Image(
+        image: AssetImage("assets/logo.png"),
+        fit: BoxFit.contain, // Maintain the aspect ratio
       ),
-    );
+    )));
   }
 }

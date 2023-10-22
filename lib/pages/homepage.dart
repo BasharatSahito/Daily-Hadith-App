@@ -1,8 +1,11 @@
 import 'dart:convert';
+
 import 'package:daily_hadees_app/Models/hadithmodel.dart';
 import 'package:daily_hadees_app/services/notification_service.dart';
+import 'package:daily_hadees_app/utils/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,10 +21,26 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    requestNotificationPermission();
     notificationService.initializeNotifications();
-    getHadith();
-    scheduleNotifications();
-    notificationService.pendingNotifications();
+  }
+
+  Future<void> requestNotificationPermission() async {
+    PermissionStatus notificationStatus =
+        await Permission.notification.request();
+
+    if (notificationStatus.isGranted) {
+      print("Notifications Permission Granted");
+      getHadith();
+      scheduleNotifications();
+      notificationService.pendingNotifications();
+    }
+    if (notificationStatus.isDenied) {
+      openAppSettings();
+    }
+    if (notificationStatus.isPermanentlyDenied) {
+      openAppSettings();
+    }
   }
 
 // Fetching the Hadith from Hadith.JSON into hadithList
@@ -43,7 +62,7 @@ class _HomePageState extends State<HomePage> {
 
   void scheduleNotifications() async {
     TimeOfDay? selectedTime =
-        const TimeOfDay(hour: 01, minute: 37); // Set your fixed time
+        const TimeOfDay(hour: 10, minute: 07); // Set your fixed time
     DateTime now = DateTime.now();
     DateTime scheduledDateTime = DateTime(
       now.year,
@@ -70,7 +89,7 @@ class _HomePageState extends State<HomePage> {
 
     // Schedule the notification for the current index
     notificationService.scheduleDailyNotifications(
-      hadithList[currentIndex].title.toString(),
+      hadithList[currentIndex].info.toString(),
       hadithList[currentIndex].urduHadith.toString(),
       scheduledDateTime,
     );
@@ -83,124 +102,29 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Daily Hadees"),
+        backgroundColor: Colors.green,
+        title: const Text("Daily Hadith"),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          // ElevatedButton(
-          //   onPressed: () {
-          //     // notificationService.showNotifications(
-          //     // "Title 1", "This is a Body");
-          //   },
-          //   child: const Text("Show Notification"),
-          // ),
-          ElevatedButton(
-            onPressed: () {
-              scheduleNotifications();
-              // fetchNotifications();
-            },
-            child: const Text("Schedule"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                notificationService.pendingNotifications();
-              });
-            },
-            child: const Text("Show Pending Notifications"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              notificationService.stopNotification();
-            },
-            child: const Text("Stop All Notifications"),
-          ),
-          Expanded(
-            flex: 1,
-            child: ListView.builder(
-              itemCount: notificationService.pendingNotification.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Center(
-                    child: Text(
-                        "Pending Notification is ${notificationService.pendingNotification[index].title.toString()}"),
-                  ),
-                );
-              },
-            ),
-          ),
           hadithList.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : Expanded(
-                  flex: 12,
                   child: ListView.builder(
                     itemCount: hadithList.length,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 30),
-                        child: Card(
-                            child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 15),
-                          child: Column(
-                            children: [
-                              hadithList[index].arabicHadith!.length > 100
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          hadithList[index]
-                                              .arabicHadith
-                                              .toString()
-                                              .substring(0, 200),
-                                          style: const TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        TextButton(
-                                            onPressed: () {},
-                                            child: Text("...More")),
-                                      ],
-                                    )
-                                  : Text(
-                                      hadithList[index].arabicHadith.toString(),
-                                      style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                              const SizedBox(height: 30),
-                              hadithList[index].urduHadith!.length > 100
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          hadithList[index]
-                                              .urduHadith
-                                              .toString()
-                                              .substring(0, 100),
-                                          style: const TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        TextButton(
-                                            onPressed: () {},
-                                            child: Text("...More")),
-                                      ],
-                                    )
-                                  : Text(
-                                      hadithList[index].urduHadith.toString(),
-                                      style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                              const SizedBox(height: 10),
-                              Text(hadithList[index].info.toString())
-                            ],
-                          ),
-                        )),
+                      var arabicHadith =
+                          hadithList[index].arabicHadith.toString();
+                      var urduHadith = hadithList[index].urduHadith.toString();
+                      var englishHadith =
+                          hadithList[index].englishHadith.toString();
+                      var hadithInfo = hadithList[index].info.toString();
+                      return Cards(
+                        arabicHadith: arabicHadith,
+                        englishHadith: englishHadith,
+                        hadithInfo: hadithInfo,
+                        urduHadith: urduHadith,
                       );
                     },
                   ),
