@@ -42,19 +42,24 @@ class _CardsState extends State<Cards> {
                             fontSize: contentFontSize,
                             fontWeight: FontWeight.bold),
                       ),
-                      TextButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (context) {
-                                return AlertBox(
-                                    hadithInfo: widget.hadithInfo.toString(),
-                                    hadith: widget.arabicHadith.toString());
+                      Row(
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  builder: (context) {
+                                    return AlertBox(
+                                        hadithInfo:
+                                            widget.hadithInfo.toString(),
+                                        hadith: widget.arabicHadith.toString());
+                                  },
+                                );
                               },
-                            );
-                          },
-                          child: const Text("...More")),
+                              child: const Text("...More")),
+                        ],
+                      ),
                     ],
                   )
                 : Text(
@@ -74,18 +79,28 @@ class _CardsState extends State<Cards> {
                             fontSize: contentFontSize,
                             fontWeight: FontWeight.bold),
                       ),
-                      TextButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertBox(
-                                    hadithInfo: widget.hadithInfo.toString(),
-                                    hadith: widget.urduHadith.toString());
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  builder: (context) {
+                                    return AlertBox(
+                                        hadithInfo:
+                                            widget.hadithInfo.toString(),
+                                        hadith: widget.urduHadith.toString());
+                                  },
+                                );
                               },
-                            );
-                          },
-                          child: const Text("...More")),
+                              child: const Text("...More")),
+                          TextButton(
+                              onPressed: () {},
+                              child: const Text("Translate to English")),
+                        ],
+                      ),
                     ],
                   )
                 : Text(

@@ -1,28 +1,88 @@
 import 'dart:convert';
-
 import 'package:daily_hadees_app/Models/hadithmodel.dart';
 import 'package:daily_hadees_app/services/notification_service.dart';
-import 'package:daily_hadees_app/utils/cart.dart';
+import 'package:daily_hadees_app/services/payloadprovider.dart';
+import 'package:daily_hadees_app/utils/alertbox.dart';
+import 'package:daily_hadees_app/utils/card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({
+    super.key,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final NotificationService notificationService = NotificationService();
+  NotificationService? notificationService;
 
   @override
   void initState() {
     super.initState();
+    notificationService = NotificationService(context);
     requestNotificationPermission();
-    notificationService.initializeNotifications();
+    notificationService!.initializeNotifications();
+    // Set up a listener for changes in the payload
+    final payloadProvider =
+        Provider.of<PayloadProvider>(context, listen: false);
+    payloadProvider.addListener(handlePayloadChange);
+  }
+
+  // Function to handle changes in the payload
+  void handlePayloadChange() {
+    final payloadProvider =
+        Provider.of<PayloadProvider>(context, listen: false);
+    String payload = payloadProvider.payload;
+    print("The value of payload is $payload");
+    if (payload != "") {
+      openAlertBoxForNotification(payload);
+    }
+  }
+
+  List loadHadith = [];
+  // Function to open the alert box for a specific hadith
+  void openAlertBoxForNotification(String payload) {
+    // Parse the payload to determine which hadith to display
+    int hadithIndex = int.tryParse(payload) ?? 0;
+    print("The index of hadith is ${hadithIndex}");
+    getHadith();
+    scheduleNotifications();
+    notificationService!.pendingNotifications();
+
+    // Check if the hadith has not already been added to the list
+    if (!loadHadith.contains(hadithIndex)) {
+      // Add the index to the list of shown notifications
+      loadHadith.add(hadithIndex);
+      // Update the UI to reflect the changes
+
+      setState(() {});
+    }
+    print("Length of Hadith is ${loadHadith.length}");
+    // Show the alert box for the specific hadith
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return AlertBox(
+    //       hadith: hadithList[hadithIndex].urduHadith.toString(),
+    //       hadithInfo: hadithList[hadithIndex].info.toString(),
+    //     );
+    //   },
+    // );
+  }
+
+  @override
+  void dispose() {
+    // Remove the listener when the widget is disposed
+    final payloadProvider =
+        Provider.of<PayloadProvider>(context, listen: false);
+    payloadProvider.removeListener(handlePayloadChange);
+    super.dispose();
   }
 
   Future<void> requestNotificationPermission() async {
@@ -33,7 +93,7 @@ class _HomePageState extends State<HomePage> {
       print("Notifications Permission Granted");
       getHadith();
       scheduleNotifications();
-      notificationService.pendingNotifications();
+      notificationService!.pendingNotifications();
     }
     if (notificationStatus.isDenied) {
       openAppSettings();
@@ -61,8 +121,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void scheduleNotifications() async {
+    // TimeOfDay? pickedTime = await showTimePicker(
+    //     context: context, initialTime: const TimeOfDay(hour: 10, minute: 7));
+    // TimeOfDay selectedTime = pickedTime ?? const TimeOfDay(hour: 10, minute: 7);
+
     TimeOfDay? selectedTime =
-        const TimeOfDay(hour: 10, minute: 07); // Set your fixed time
+        const TimeOfDay(hour: 03, minute: 42); // Set your fixed time
     DateTime now = DateTime.now();
     DateTime scheduledDateTime = DateTime(
       now.year,
@@ -71,6 +135,7 @@ class _HomePageState extends State<HomePage> {
       selectedTime.hour,
       selectedTime.minute,
     );
+
     // Get the current index from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int currentIndex = prefs.getInt('currentIndex') ?? 0;
@@ -88,7 +153,8 @@ class _HomePageState extends State<HomePage> {
     }
 
     // Schedule the notification for the current index
-    notificationService.scheduleDailyNotifications(
+    notificationService!.scheduleDailyNotifications(
+      hadithList[currentIndex].id!.toInt(),
       hadithList[currentIndex].info.toString(),
       hadithList[currentIndex].urduHadith.toString(),
       scheduledDateTime,
@@ -107,19 +173,34 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          hadithList.isEmpty
+          ElevatedButton(
+              onPressed: () {
+                notificationService!.pendingNotifications();
+              },
+              child: Text("Pending Notifications")),
+          ElevatedButton(
+              onPressed: () {
+                notificationService!.stopNotification();
+              },
+              child: Text("Stop Notifications")),
+          loadHadith.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : Expanded(
                   child: ListView.builder(
-                    itemCount: hadithList.length,
+                    itemCount: loadHadith.length,
                     itemBuilder: (context, index) {
+                      int hadithIndex = loadHadith[index];
+
                       var arabicHadith =
-                          hadithList[index].arabicHadith.toString();
-                      var urduHadith = hadithList[index].urduHadith.toString();
+                          hadithList[hadithIndex].arabicHadith.toString();
+                      var urduHadith =
+                          hadithList[hadithIndex].urduHadith.toString();
                       var englishHadith =
-                          hadithList[index].englishHadith.toString();
-                      var hadithInfo = hadithList[index].info.toString();
+                          hadithList[hadithIndex].englishHadith.toString();
+                      var hadithInfo = hadithList[hadithIndex].info.toString();
                       return Cards(
                         arabicHadith: arabicHadith,
                         englishHadith: englishHadith,

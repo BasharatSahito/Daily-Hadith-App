@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/> 
     <application
-        android:label="daily_hadees_app"
+        android:label="Daily Hadith"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
