@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
 
 class PayloadProvider with ChangeNotifier {
-  String _payload = "";
+  bool? _payloadBool;
 
-  String get payload => _payload;
+  bool? get payloadBool => _payloadBool;
 
-  void setPayload(String payload) {
-    _payload = payload;
+  void setPayload(bool payloadBool) {
+    _payloadBool = payloadBool;
+    notifyListeners();
+  }
+
+  int? _payloadIndex;
+
+  int? get payloadIndex => _payloadIndex;
+
+  void setPayloadIndex(payloadIndex) {
+    _payloadIndex = payloadIndex;
+    notifyListeners();
+  }
+
+  int? _hadithIndex;
+
+  int? get hadithIndex => _hadithIndex;
+
+  void setHadithIndex(int hadithIndex) {
+    _hadithIndex = hadithIndex;
     notifyListeners();
   }
 }

@@ -1,13 +1,18 @@
-import 'package:daily_hadees_app/utils/alertbox.dart';
 import 'package:flutter/material.dart';
 
 class Cards extends StatefulWidget {
-  final String urduHadith;
+  final int hadithId;
+  final int hadithIndex;
+  final String hadithTitle;
   final String arabicHadith;
+  final String urduHadith;
   final String englishHadith;
   final String hadithInfo;
   const Cards({
     super.key,
+    required this.hadithId,
+    required this.hadithIndex,
+    required this.hadithTitle,
     required this.arabicHadith,
     required this.englishHadith,
     required this.urduHadith,
@@ -26,93 +31,75 @@ class _CardsState extends State<Cards> {
     final contentFontSize = screenWidth * 0.045;
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
-      child: Card(
-          child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
-        child: Column(
-          children: [
-            widget.arabicHadith.length > 100
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.arabicHadith.toString().substring(0, 200),
-                        style: TextStyle(
-                            fontSize: contentFontSize,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Row(
-                        children: [
-                          TextButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (context) {
-                                    return AlertBox(
-                                        hadithInfo:
-                                            widget.hadithInfo.toString(),
-                                        hadith: widget.arabicHadith.toString());
-                                  },
-                                );
-                              },
-                              child: const Text("...More")),
-                        ],
-                      ),
-                    ],
-                  )
-                : Text(
-                    widget.arabicHadith.toString(),
-                    style: TextStyle(
-                        fontSize: contentFontSize, fontWeight: FontWeight.bold),
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, "/hadithdetail", arguments: {
+            'hadithId': widget.hadithId,
+            'hadithTitle': widget.hadithTitle,
+            'arabicHadith': widget.arabicHadith,
+            'urduHadith': widget.urduHadith,
+            'englishHadith': widget.englishHadith,
+            'hadithInfo': widget.hadithInfo,
+          });
+        },
+        child: Card(
+            elevation: 2,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                  vertical: screenHeight * 0.02),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      "Hadith ${widget.hadithIndex}",
+                      style: TextStyle(
+                          fontSize: contentFontSize,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
-            Divider(thickness: screenWidth * 0.003),
-            SizedBox(height: screenHeight * 0.01),
-            widget.urduHadith.length > 100
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.urduHadith.toString().substring(0, 100),
-                        style: TextStyle(
-                            fontSize: contentFontSize,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (context) {
-                                    return AlertBox(
-                                        hadithInfo:
-                                            widget.hadithInfo.toString(),
-                                        hadith: widget.urduHadith.toString());
-                                  },
-                                );
-                              },
-                              child: const Text("...More")),
-                          TextButton(
-                              onPressed: () {},
-                              child: const Text("Translate to English")),
-                        ],
-                      ),
-                    ],
-                  )
-                : Text(
-                    widget.urduHadith.toString(),
+                  SizedBox(height: screenHeight * 0.03),
+                  widget.arabicHadith.length > 100
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.arabicHadith.toString().substring(0, 200),
+                              style: TextStyle(
+                                  fontSize: contentFontSize,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )
+                      : Text(
+                          widget.arabicHadith.toString(),
+                          style: TextStyle(
+                              fontSize: contentFontSize,
+                              fontWeight: FontWeight.bold),
+                        ),
+                  Text(
+                    "..More",
                     style: TextStyle(
-                        fontSize: contentFontSize, fontWeight: FontWeight.bold),
+                        fontSize: contentFontSize * .8,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
                   ),
-            SizedBox(height: screenHeight * 0.001),
-            Text(widget.hadithInfo.toString())
-          ],
-        ),
-      )),
+                  Divider(thickness: screenWidth * 0.003),
+                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(height: screenHeight * 0.001),
+                  Center(
+                      child: Text(
+                    widget.hadithInfo.toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ))
+                ],
+              ),
+            )),
+      ),
     );
   }
 }

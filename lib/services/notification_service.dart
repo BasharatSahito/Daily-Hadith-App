@@ -1,4 +1,5 @@
 import 'package:daily_hadees_app/services/payloadprovider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
@@ -25,10 +26,20 @@ class NotificationService {
   }
 
   String payload = "";
+  bool? payloadBool;
   void onDidReceiveNotificationResponse(NotificationResponse details) async {
     payload = details.payload!;
-    print("The ID is $payload");
-    Provider.of<PayloadProvider>(context, listen: false).setPayload(payload);
+    pendingNotifications();
+    if (payload != "") {
+      payloadBool = true;
+      int? payloadIndex = int.tryParse(payload);
+      if (payloadIndex != null) {
+        Provider.of<PayloadProvider>(context, listen: false)
+            .setPayloadIndex(payloadIndex);
+      }
+      Provider.of<PayloadProvider>(context, listen: false)
+          .setPayload(payloadBool!);
+    }
   }
 
   void scheduleDailyNotifications(
@@ -58,194 +69,27 @@ class NotificationService {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );
-      print('Notification scheduled successfully ');
+      pendingNotifications();
     } catch (e) {
-      print('Error scheduling notification: $e');
+      if (kDebugMode) {
+        print("Error Scheduling Data");
+      }
     }
   }
 
   List<PendingNotificationRequest> pendingNotification = [];
   void pendingNotifications() async {
-    print("clicked");
     pendingNotification =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     for (var notification in pendingNotification) {
-      print(
-          'Scheduled notification: ${notification.title} and the ID is ${notification.payload} ');
+      int hadithIndex = int.tryParse(notification.payload.toString()) ?? 0;
+      // ignore: use_build_context_synchronously
+      Provider.of<PayloadProvider>(context, listen: false)
+          .setHadithIndex(hadithIndex);
     }
   }
 
   void stopNotification() async {
     await flutterLocalNotificationsPlugin.cancelAll();
-    print('All Notifications Cancelled');
   }
 }
-
-
-
-// Function to Show Notifications With Date & Time
-// void showNotifications(title, body) async {
-//   AndroidNotificationDetails androidNotificationDetails =
-//       const AndroidNotificationDetails(
-//     "channelId",
-//     "channelName",
-//     priority: Priority.high,
-//     importance: Importance.max,
-//   );
-//   NotificationDetails notificationDetails =
-//       NotificationDetails(android: androidNotificationDetails);
-
-//   try {
-//     await flutterLocalNotificationsPlugin.show(
-//       0,
-//       title,
-//       body,
-//       notificationDetails,
-//     );
-//     print('Notification scheduled successfully');
-//   } catch (e) {
-//     print('Error scheduling notification: $e');
-//   }
-// }
-
-// void scheduleNotifications(
-//     int id, String title, String body, DateTime date) async {
-//   var tzDateNotif = tz.TZDateTime.from(date, tz.local);
-
-//   AndroidNotificationDetails androidNotificationDetails =
-//       const AndroidNotificationDetails(
-//     "channelId",
-//     "channelName",
-//     priority: Priority.high,
-//     importance: Importance.max,
-//   );
-//   NotificationDetails notificationDetails =
-//       NotificationDetails(android: androidNotificationDetails);
-
-//   try {
-//     await flutterLocalNotificationsPlugin.zonedSchedule(
-//       id,
-//       title,
-//       body,
-//       tzDateNotif,
-//       notificationDetails,
-//       uiLocalNotificationDateInterpretation:
-//           UILocalNotificationDateInterpretation.absoluteTime,
-//     );
-//     print('Notification scheduled successfully');
-//   } catch (e) {
-//     print('Error scheduling notification: $e');
-//   }
-// }
-
-// Function for periodicallyShow
-// void scheduleperiodicallyNotifications(String title, String body) async {
-//   AndroidNotificationDetails androidNotificationDetails =
-//       const AndroidNotificationDetails(
-//     "channelId",
-//     "channelName",
-//     priority: Priority.high,
-//     importance: Importance.max,
-//   );
-//   NotificationDetails notificationDetails =
-//       NotificationDetails(android: androidNotificationDetails);
-
-//   try {
-//     await flutterLocalNotificationsPlugin.periodicallyShow(
-//       10,
-//       title,
-//       body,
-//       RepeatInterval.daily,
-//       notificationDetails,
-//     );
-//     print('Notification scheduled successfully');
-//   } catch (e) {
-//     print('Error scheduling notification: $e');
-//   }
-// }
-
-
-
-
-
- // void onDidReceiveNotificationResponse(NotificationResponse details) async {
-  //   final String? payload = details.payload;
-  //   String initialContent = "Default Content";
-  //   String fullContent = "Default Content";
-  //   if (payload != null) {
-  //     final List<String> parts = payload.split(':');
-  //     if (parts.length == 2) {
-  //       initialContent = parts[0];
-  //       fullContent = parts[1];
-
-  //       // Now you have the title and body to work with
-  //       print(
-  //           'Received Notification - Title: $initialContent, Body: $fullContent');
-  //     }
-  //   }
-
-  //   final String? actionId = details.actionId;
-  //   if (actionId == "action_id") {
-  //     print("PRESSED");
-
-  //     AndroidNotificationDetails updatedAndroidNotificationDetails =
-  //         AndroidNotificationDetails(
-  //       "channelId",
-  //       "channelName",
-  //       priority: Priority.high,
-  //       importance: Importance.max,
-  //       styleInformation: BigTextStyleInformation(initialContent + fullContent),
-  //       actions: [
-  //         const AndroidNotificationAction(
-  //           'action_id', // Action ID
-  //           'Expanded', // Action button label
-  //           cancelNotification: false,
-  //         ),
-  //       ],
-  //     );
-
-  //     NotificationDetails updatedNotificationDetails =
-  //         NotificationDetails(android: updatedAndroidNotificationDetails);
-
-  //     await flutterLocalNotificationsPlugin.show(
-  //       0, // Same notification ID
-  //       "Daily Hadees",
-  //       initialContent,
-  //       updatedNotificationDetails, // Use the updated notification details
-  //     );
-  //   }
-  //   print('Pressed Action Button: ${actionId}');
-  // }
-
-  // void showNotifications(title, body) async {
-  //   AndroidNotificationDetails androidNotificationDetails =
-  //       const AndroidNotificationDetails(
-  //     "channelId",
-  //     "channelName",
-  //     priority: Priority.high,
-  //     importance: Importance.max,
-  //     actions: [
-  //       AndroidNotificationAction(
-  //         'action_id', // Action ID
-  //         'Test Button', // Action button label
-  //         showsUserInterface: true,
-  //         cancelNotification: false,
-  //       ),
-  //     ],
-  //   );
-  //   NotificationDetails notificationDetails =
-  //       NotificationDetails(android: androidNotificationDetails);
-
-  //   try {
-  //     await flutterLocalNotificationsPlugin.show(
-  //       0,
-  //       title,
-  //       body,
-  //       notificationDetails,
-  //       payload: body,
-  //     );
-  //     print('Notification scheduled successfully');
-  //   } catch (e) {
-  //     print('Error scheduling notification: $e');
-  //   }
-  // }
