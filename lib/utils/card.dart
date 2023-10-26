@@ -79,13 +79,15 @@ class _CardsState extends State<Cards> {
                               fontSize: contentFontSize,
                               fontWeight: FontWeight.bold),
                         ),
+                  SizedBox(height: screenHeight * 0.01),
                   Text(
-                    "..More",
+                    "..Read the complete hadith",
                     style: TextStyle(
                         fontSize: contentFontSize * .8,
                         fontWeight: FontWeight.bold,
                         color: Colors.blue),
                   ),
+                  SizedBox(height: screenHeight * 0.01),
                   Divider(thickness: screenWidth * 0.003),
                   SizedBox(height: screenHeight * 0.01),
                   SizedBox(height: screenHeight * 0.001),

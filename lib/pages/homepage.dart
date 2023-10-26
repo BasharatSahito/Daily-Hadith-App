@@ -87,12 +87,9 @@ class _HomePageState extends State<HomePage> {
       Provider.of<PayloadProvider>(context, listen: false)
           .setPayload(newPayloadBool);
     }
-    debugPrint("Passing hadithIndex ID is: $hadithIndex");
     // Move the navigation logic to fetchHadith's completion callback
     fetchHadith().then((_) {
       if (hadithList.isNotEmpty) {
-        debugPrint("Passing hadithIndex ID is: $hadithIndex");
-        debugPrint("Testing the length of hadith list ${hadithList.length}");
         if (hadithIndex >= 0 && hadithIndex < hadithList.length) {
           Navigator.pushNamed(context, "/hadithdetail", arguments: {
             'hadithId': hadithList[hadithIndex].id,
@@ -160,23 +157,14 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ElevatedButton(
-              onPressed: () {
-                notificationService!.pendingNotifications();
-              },
-              child: const Text("New Pending Notifications")),
-          ElevatedButton(
-              onPressed: () {
-                notificationService!.stopNotification();
-              },
-              child: const Text("Stop Notifications")),
           loadHadith.isEmpty || hadithList.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : Expanded(
                   child: ListView.builder(
                     itemCount: loadHadith.length,
                     itemBuilder: (context, index) {
-                      int hadithIndex = loadHadith[index];
+                      int hadithIndex =
+                          loadHadith[loadHadith.length - 1 - index];
 
                       var hadithId = hadithList[hadithIndex].id;
                       var hadithTitle =

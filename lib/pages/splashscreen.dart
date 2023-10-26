@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
         });
       });
     } else {
-      Timer(const Duration(seconds: 1), () {
+      Timer(const Duration(seconds: 2), () {
         Navigator.pushReplacementNamed(context, "/homepage");
       });
     }

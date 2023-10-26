@@ -83,6 +83,10 @@ class NotificationService {
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     for (var notification in pendingNotification) {
       int hadithIndex = int.tryParse(notification.payload.toString()) ?? 0;
+      if (kDebugMode) {
+        print(
+            "Pending Scheduled Notification: Title: ${notification.title}, ID: ${notification.payload}");
+      }
       // ignore: use_build_context_synchronously
       Provider.of<PayloadProvider>(context, listen: false)
           .setHadithIndex(hadithIndex);
