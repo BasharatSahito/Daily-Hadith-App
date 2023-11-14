@@ -28,7 +28,7 @@ class _CardsState extends State<Cards> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final contentFontSize = screenWidth * 0.045;
+    final contentFontSize = screenWidth * 0.05;
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: InkWell(
@@ -61,17 +61,12 @@ class _CardsState extends State<Cards> {
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.03),
-                  widget.arabicHadith.length > 100
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.arabicHadith.toString().substring(0, 200),
-                              style: TextStyle(
-                                  fontSize: contentFontSize,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                  widget.arabicHadith.length > 200
+                      ? Text(
+                          widget.arabicHadith.toString().substring(0, 200),
+                          style: TextStyle(
+                              fontSize: contentFontSize,
+                              fontWeight: FontWeight.bold),
                         )
                       : Text(
                           widget.arabicHadith.toString(),

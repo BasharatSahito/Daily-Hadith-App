@@ -7,15 +7,16 @@ class HadithDetail extends StatefulWidget {
   final String urduHadith;
   final String englishHadith;
   final String hadithInfo;
+
   const HadithDetail({
-    super.key,
+    Key? key,
     required this.hadithId,
     required this.hadithTitle,
     required this.arabicHadith,
     required this.urduHadith,
     required this.englishHadith,
     required this.hadithInfo,
-  });
+  }) : super(key: key);
 
   @override
   State<HadithDetail> createState() => _HadithDetailState();
@@ -24,61 +25,124 @@ class HadithDetail extends StatefulWidget {
 class _HadithDetailState extends State<HadithDetail> {
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Detailed Hadith"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(
-              top: screenHeight * 0.05,
-              right: screenWidth * 0.03,
-              left: screenWidth * 0.03,
-              bottom: screenHeight * 0.05),
-          child: Column(
-            children: [
-              Text(
-                widget.hadithInfo.toString(),
-                style: TextStyle(
-                    fontSize: screenWidth * 0.05, fontWeight: FontWeight.w700),
+        padding: EdgeInsets.all(screenWidth * 0.04),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              elevation: screenWidth * 0.005,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(screenWidth * 0.04),
               ),
-              SizedBox(
-                height: screenHeight * .03,
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.hadithInfo,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                widget.arabicHadith.toString(),
-                style: TextStyle(
-                    fontSize: screenWidth * 0.05, fontWeight: FontWeight.w700),
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            Card(
+              elevation: screenWidth * 0.005,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(screenWidth * 0.04),
               ),
-              SizedBox(
-                height: screenHeight * .03,
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Arabic Hadith:",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      widget.arabicHadith,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Divider(thickness: screenWidth * 0.003),
-              SizedBox(
-                height: screenHeight * .03,
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            Card(
+              elevation: screenWidth * 0.005,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(screenWidth * 0.04),
               ),
-              Text(
-                widget.urduHadith.toString(),
-                style: TextStyle(
-                    fontSize: screenWidth * 0.05, fontWeight: FontWeight.w700),
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Urdu Hadith:",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      widget.urduHadith,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(
-                height: screenHeight * .03,
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            Card(
+              elevation: screenWidth * 0.005,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(screenWidth * 0.04),
               ),
-              Divider(thickness: screenWidth * 0.003),
-              SizedBox(
-                height: screenHeight * .03,
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "English Hadith:",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      widget.englishHadith,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                widget.englishHadith.toString(),
-                style: TextStyle(
-                    fontSize: screenWidth * 0.05, fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
