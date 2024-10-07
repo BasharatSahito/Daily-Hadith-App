@@ -27,7 +27,7 @@ android {
     multiDexEnabled true
   }
     namespace "com.example.daily_hadees_app"
-    compileSdkVersion 33
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
